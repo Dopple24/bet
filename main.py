@@ -2,8 +2,8 @@ import math
 import random
 
 startingRate = 1.6
-currentRate = [1.6, 1.6]
-bets = [[[300, 1.6]], [[300, 1.6]]]
+currentRate = [1.6, 1.6, 1.6]
+bets = [[[250, 1.6]], [[250, 1.6]], [[250, 1.6]]]
 options = [["option0", 0], ["option1", 0]]
 
 def getData(betID):
@@ -25,26 +25,37 @@ def newBet(volume, betID):
     newRates = []
     for i in range(len(bets)):
         data = getData(i)
-        newRate = math.sqrt(max(((data[0] - data[1])),0)/300) + 1
+        newRate = min(
+            math.sqrt(max((data[0] - data[1]), 0) / 300) + 1,
+            math.sqrt(max((data[0] - data[1]), 0) ** 3) / 2000 + 1
+        )
         newRates.append(newRate)
-        #print(newRate)
+        print(f"rate for option {i}: {newRate}")
+        truePL = data[0] - data[1] + bets[i][0][0] * (bets[i][0][1] - 1)
+        for bet in bets:
+            if bet is not bets[i]:
+                truePL -= bet[0][0]
+        print(f"p&l for option {i}: {truePL}")
     currentRate = newRates
+    for bet in bets:
+        bet[0][0] = max(bet[0][0] - volume/3, 0)
 
 
-for j in range(100):
+for j in range(1):
     totalBet = 0
     for i in range(20):
-        #print(f"{i}:")
-        rand = random.randint(0, 1)
-        #print(rand)
-        rand2 = random.randint(10, 100)
+        print(f"{i}:")
+        rand = random.randint(0, 2)
+        print(rand)
+        rand2 = random.randint(0, 10) * random.randint(0, 10) + 10
+        print(rand2)
         newBet(rand2, rand)
 
         totalBet += rand2
 
     print("\n--- Final Profit Analysis ---")
     print("Total Bet: ", totalBet)
-    for win_option in range(2):
+    for win_option in range(len(options)):
         winnings = 0
         losses = 0
         # Skip the first placeholder bet
@@ -59,7 +70,8 @@ for j in range(100):
                     losses += amount * (rate-1)
         net_profit = round(winnings - losses, 2)
         print(f"If Option {win_option} wins: Profit = {net_profit}")
+        print(bets)
     startingRate = 1.6
-    currentRate = [1.6, 1.6]
-    bets = [[[300, 1.6]], [[300, 1.6]]]
+    currentRate = [1.6, 1.6, 1.6]
+    bets = [[[250, 1.6]], [[250, 1.6]], [250, 1.6]]
     options = [["option0", 0], ["option1", 0]]
