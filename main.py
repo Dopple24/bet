@@ -3,8 +3,22 @@ import random
 
 startingRate = 1.6
 currentRate = [1.6, 1.6, 1.6]
-bets = [[[250, 1.6]], [[250, 1.6]], [[250, 1.6]]]
+bets = [[[0, 1.6]], [[0, 1.6]]]
 options = [["option0", 0], ["option1", 0]]
+
+startingValue = 30
+if len(bets) == 2:
+    startingValue = 250
+elif len(bets) == 3:
+    startingValue = 150
+elif len(bets) == 4:
+    startingValue = 80
+elif len(bets) == 5:
+    startingValue = 50
+else:
+    startingValue = 30
+for bet in bets:
+    bet[0][0] = startingValue
 
 def getData(betID):
     losses = 0
@@ -26,8 +40,8 @@ def newBet(volume, betID):
     for i in range(len(bets)):
         data = getData(i)
         newRate = min(
-            math.sqrt(max((data[0] - data[1]), 0) / 300) + 1,
-            math.sqrt(max((data[0] - data[1]), 0) ** 3) / 2000 + 1
+            math.sqrt(max((data[0] - data[1]), 0) / 300) * len(bets) / 2 + 1,
+            math.sqrt(max((data[0] - data[1]), 0) ** 3) / 2000 * len(bets) / 2 + 1
         )
         newRates.append(newRate)
         print(f"rate for option {i}: {newRate}")
@@ -45,7 +59,9 @@ for j in range(1):
     totalBet = 0
     for i in range(20):
         print(f"{i}:")
-        rand = random.randint(0, 2)
+
+        rand = random.randint(0, len(bets) - 1)
+
         print(rand)
         rand2 = random.randint(0, 10) * random.randint(0, 10) + 10
         print(rand2)
@@ -73,5 +89,5 @@ for j in range(1):
         print(bets)
     startingRate = 1.6
     currentRate = [1.6, 1.6, 1.6]
-    bets = [[[250, 1.6]], [[250, 1.6]], [250, 1.6]]
+    bets = [[[80, 1.6]], [[80, 1.6]], [[80, 1.6]], [[80, 1.6]]]
     options = [["option0", 0], ["option1", 0]]
